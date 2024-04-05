@@ -1,0 +1,8 @@
+[package]
+name = "bitvm"
+version = "0.1.0"
+edition = "2018"
+
+# Define your dependencies here. For example, if you're using a specific zk-SNARKs library, add it here.
+[dependencies]
+risc0-zkvm = "0.19.1"

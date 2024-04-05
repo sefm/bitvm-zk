@@ -1,0 +1,62 @@
+pub enum GateType {
+    NAND,
+    AND,
+    NOT,
+    XOR, // Added XOR gate type
+    // Additional gate types
+}
+
+pub struct LogicGate {
+    gate_type: GateType,
+    inputs: Vec<usize>, // Indices of input gates
+}
+
+impl LogicGate {
+    pub fn new(gate_type: GateType, inputs: Vec<usize>) -> Self {
+        LogicGate { gate_type, inputs }
+    }
+
+    pub fn serialize(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        bytes.push(self.gate_type as u8);
+        for &input_index in &self.inputs {
+            bytes.extend_from_slice(&input_index.to_le_bytes());
+        }
+        bytes
+    }
+
+    // Method to evaluate the gate output based on the gate type and inputs.
+    // This is a placeholder. Actual implementation will depend on how the inputs are processed.
+    pub fn evaluate(&self, input_values: &[bool]) -> bool {
+        if input_values.len() != self.inputs.len() {
+            panic!("Incorrect number of input values provided for logic gate evaluation.");
+        }
+
+        match self.gate_type {
+            GateType::NAND => !(input_values[0] && input_values[1]),
+            GateType::AND => input_values[0] && input_values[1],
+            GateType::NOT => !input_values[0],
+            GateType::XOR => input_values[0] ^ input_values[1],
+            // Add cases for additional gates
+        }
+    }
+
+    // Additional methods as needed...
+
+    // ... (existing code)
+
+    // A pseudo-code function to simulate a basic bitwise operation gate for SHA-256.
+    // This would be expanded to include all necessary operations.
+    pub fn sha256_basic_op(&self, input_values: &[bool]) -> Result<bool, String> {
+        match self.gate_type {
+            GateType::XOR => { /* XOR logic implementation */ },
+            GateType::AND => { /* AND logic implementation */ },
+            GateType::OR => { /* OR logic implementation */ },
+            GateType::NOT => { /* NOT logic implementation */ },
+            GateType::RIGHTSHIFT => { /* Right shift logic implementation */ },
+            GateType::ADDITION => { /* Addition logic implementation */ },
+            // Other operations as required by SHA-256...
+            _ => Err("Unsupported operation for SHA-256.".to_string()),
+        }
+    }
+}

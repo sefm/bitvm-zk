@@ -1,0 +1,57 @@
+use crate::logic_gate::{LogicGate, GateType};
+use crate::op_code_circuits;
+
+pub struct BinaryCircuit {
+    gates: Vec<LogicGate>,
+    connections: Vec<(usize, usize)>, // (output_gate_index, input_gate_index)
+}
+
+impl BinaryCircuit {
+    pub fn new() -> Self {
+        BinaryCircuit {
+            gates: Vec::new(),
+            connections: Vec::new(),
+        }
+    }
+
+    pub fn add_gate(&mut self, gate_type: GateType, input_indices: Vec<usize>) -> usize {
+        let gate = LogicGate::new(gate_type, input_indices);
+        let gate_index = self.gates.len();
+        self.gates.push(gate);
+        gate_index
+    }
+
+    pub fn add_connection(&mut self, output_gate_index: usize, input_gate_index: usize) {
+        // Ensure the indices are within the bounds of the gates vector
+        if output_gate_index < self.gates.len() && input_gate_index < self.gates.len() {
+            self.connections.push((output_gate_index, input_gate_index));
+        } else {
+            panic!("Gate index out of bounds");
+        }
+    }
+
+    pub fn create_op_code_circuit(op_code: &str) -> Result<Self, String> {
+        op_code_circuits::create_op_code_circuit(op_code)
+    }
+
+    pub fn serialize_for_risc0(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+
+        // Add circuit metadata (number of gates, number of connections)
+        bytes.extend(&self.gates.len().to_le_bytes());
+        bytes.extend(&self.connections.len().to_le_bytes());
+
+        // Serialize each gate and its connections
+        for gate in &self.gates {
+            bytes.extend(gate.serialize_for_risc0());
+        }
+
+        // Serialize each connection (output gate index, input gate index)
+        for &(output, input) in &self.connections {
+            bytes.extend(&output.to_le_bytes());
+            bytes.extend(&input.to_le_bytes());
+        }
+
+        bytes
+    }
+}

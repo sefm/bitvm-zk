@@ -1,0 +1,78 @@
+// In op_code_circuits.rs
+
+pub fn op_add_circuit() -> BinaryCircuit {
+    let mut circuit = BinaryCircuit::new();
+
+    // Assuming inputs are single-bit for simplicity. In practice, they would be multi-bit.
+    let input1 = circuit.add_gate(LogicGate::new(GateType::Input, vec![]));
+    let input2 = circuit.add_gate(LogicGate::new(GateType::Input, vec![]));
+
+    // Implement a full adder using NAND gates
+    // This is a simplified example. A full implementation would need multiple full adders for multi-bit addition.
+    let nand1 = circuit.add_gate(LogicGate::new(GateType::NAND, vec![input1, input2]));
+    let nand2 = circuit.add_gate(LogicGate::new(GateType::NAND, vec![input1, nand1]));
+    let nand3 = circuit.add_gate(LogicGate::new(GateType::NAND, vec![nand1, input2]));
+    let sum = circuit.add_gate(LogicGate::new(GateType::NAND, vec![nand2, nand3]));
+
+    // Connect gates appropriately
+    // ...
+
+    circuit
+}
+
+fn create_message_schedule(circuit: &mut BinaryCircuit) -> Vec<usize> {
+    // Pseudo-code logic to fill out the SHA-256 message schedule
+    // This involves creating logic gates for bitwise operations used in the message schedule.
+    // For each of the first 16 words, a gate would be created representing the input message words.
+    // Subsequent words are generated according to the SHA-256 schedule formula.
+    // ...
+    vec![] // Placeholder for the array of word indices
+}
+
+fn sha256_round(circuit: &mut BinaryCircuit, working_vars: &[usize], message_word: &usize) -> Vec<usize> {
+    // Pseudo-code logic to perform a single SHA-256 round.
+    // This involves several bitwise operations, including additions, shifts, and logic functions like XOR, AND, etc.
+    // These would be implemented using the logic gates and connected to simulate the round function.
+    // ...
+    working_vars.to_vec() // Placeholder for the new working variables after the round
+}
+
+pub fn op_sha256_circuit() -> BinaryCircuit {
+    let mut circuit = BinaryCircuit::new();
+
+    // Create logic gates for the initial hash values (h0 to h7) according to SHA-256 specs
+    let initial_hashes = (0..8).map(|_| circuit.add_gate(LogicGate::new(GateType::Input, vec![])))
+                                .collect::<Vec<_>>();
+
+    // The SHA-256 message schedule expands the message block (512 bits) into an array of 64 32-bit words
+    let message_schedule = create_message_schedule(&mut circuit);
+
+    // The main loop of SHA-256 performs 64 rounds of operations on the message schedule
+    let mut working_vars = initial_hashes.clone();
+    for i in 0..64 {
+        let round_result = sha256_round(&mut circuit, &working_vars, &message_schedule[i]);
+        working_vars = round_result;
+    }
+
+    // Final addition of the compressed chunk to the current hash value (not shown in the reversible circuit diagram)
+    // ...
+
+    circuit
+}
+
+// This function would create the message schedule (W0 to W63) as per SHA-256 specs
+fn create_message_schedule(circuit: &mut BinaryCircuit) -> Vec<usize> {
+    // Logic to create the message schedule array using logic gates
+    // ...
+    vec![] // Placeholder for the array of word indices
+}
+
+// This function performs a single round of SHA-256 on the message schedule and working variables
+fn sha256_round(circuit: &mut BinaryCircuit, working_vars: &[usize], message_word: &usize) -> Vec<usize> {
+    // Logic to perform a single round of SHA-256 using logic gates
+    // ...
+    working_vars.to_vec() // Placeholder for the new working variables
+}
+
+// Implementations for logic gates that perform addition, bitwise AND, XOR, etc., are required
+// for the full SHA-256 implementation.
